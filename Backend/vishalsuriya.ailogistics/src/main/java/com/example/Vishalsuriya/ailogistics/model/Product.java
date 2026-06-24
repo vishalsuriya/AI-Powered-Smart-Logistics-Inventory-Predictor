@@ -1,14 +1,12 @@
 package com.example.Vishalsuriya.ailogistics.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 
 @Entity
-@Data
 @Table(name = "products")
 public class Product {
 
@@ -33,18 +31,7 @@ public class Product {
     @Column(nullable = false)
     private BigDecimal price;
 
-    @Column(nullable = false)
-    private Integer currentStock = 0;
-
-    private Integer reservedStock = 0;
-
-    @Column(nullable = false)
-    private Integer minimumThreshold;
-
-    private Integer reorderQuantity;
-
     private String supplierId;
-    private String warehouseId;
 
     @Enumerated(EnumType.STRING)
     private ProductStatus status;
@@ -124,37 +111,6 @@ public class Product {
         this.price = price;
     }
 
-    public Integer getCurrentStock() {
-        return currentStock;
-    }
-
-    public void setCurrentStock(Integer currentStock) {
-        this.currentStock = currentStock;
-    }
-
-    public Integer getReservedStock() {
-        return reservedStock;
-    }
-
-    public void setReservedStock(Integer reservedStock) {
-        this.reservedStock = reservedStock;
-    }
-
-    public Integer getMinimumThreshold() {
-        return minimumThreshold;
-    }
-
-    public void setMinimumThreshold(Integer minimumThreshold) {
-        this.minimumThreshold = minimumThreshold;
-    }
-
-    public Integer getReorderQuantity() {
-        return reorderQuantity;
-    }
-
-    public void setReorderQuantity(Integer reorderQuantity) {
-        this.reorderQuantity = reorderQuantity;
-    }
 
     public String getSupplierId() {
         return supplierId;
@@ -162,14 +118,6 @@ public class Product {
 
     public void setSupplierId(String supplierId) {
         this.supplierId = supplierId;
-    }
-
-    public String getWarehouseId() {
-        return warehouseId;
-    }
-
-    public void setWarehouseId(String warehouseId) {
-        this.warehouseId = warehouseId;
     }
 
     public ProductStatus getStatus() {
