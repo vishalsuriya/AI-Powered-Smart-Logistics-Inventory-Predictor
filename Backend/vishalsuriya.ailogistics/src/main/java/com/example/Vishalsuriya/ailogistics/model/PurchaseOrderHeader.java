@@ -1,13 +1,23 @@
 package com.example.Vishalsuriya.ailogistics.model;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.PositiveOrZero;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "purchase_order_headers")
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class PurchaseOrderHeader {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,25 +28,42 @@ public class PurchaseOrderHeader {
     @Column(name = "trx_number", unique = true, nullable = false)
     private String trxNumber;
 
-    @Column(name = "vendor_id", nullable = false)
-    private Long vendorId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vendor_id", nullable = false)
+    private Vendor vendor;
 
-    @Column(name = "warehouse_id", nullable = false)
-    private Long warehouseId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "warehouse_id", nullable = false)
+    private Warehouse warehouse;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private PurchaseOrderStatus status;
 
+    @PositiveOrZero
     @Column(nullable = false)
-    private BigDecimal totalAmount;
+    private BigDecimal totalAmount = BigDecimal.ZERO;
 
     @Column(nullable = false)
     private LocalDate orderDate;
 
-    @Column(updatable = false)
+    @Column(length = 1000)
+    private String remarks;
+
+    @Column(name = "expected_delivery_date")
+    private LocalDate expectedDeliveryDate;
+
+    @OneToMany(
+            mappedBy = "purchaseOrderHeader",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<PurchaseOrderLine> purchaseOrderLines = new ArrayList<>();
+
+    @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
+    @Column(nullable = false)
     private LocalDateTime updatedAt;
 
     @PrePersist
@@ -57,48 +84,13 @@ public class PurchaseOrderHeader {
     public void preUpdate() {
         updatedAt = LocalDateTime.now();
     }
-
-    public BigDecimal getTotalAmount() {
-        return totalAmount;
+    public void addPurchaseOrderLine(PurchaseOrderLine line) {
+        purchaseOrderLines.add(line);
+        line.setPurchaseOrderHeader(this);
     }
 
-    public void setTotalAmount(BigDecimal totalAmount) {
-        this.totalAmount = totalAmount;
-    }
-
-    public PurchaseOrderStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(PurchaseOrderStatus status) {
-        this.status = status;
-    }
-
-    public LocalDate getOrderDate() {
-        return orderDate;
-    }
-
-    public void setOrderDate(LocalDate orderDate) {
-        this.orderDate = orderDate;
-    }
-
-    public void setTrxNumber(String trxNumber) {
-        this.trxNumber = trxNumber;
-    }
-
-    public Long getVendorId() {
-        return vendorId;
-    }
-
-    public void setVendorId(Long vendorId) {
-        this.vendorId = vendorId;
-    }
-
-    public Long getWarehouseId() {
-        return warehouseId;
-    }
-
-    public void setWarehouseId(Long warehouseId) {
-        this.warehouseId = warehouseId;
+    public void removePurchaseOrderLine(PurchaseOrderLine line) {
+        purchaseOrderLines.remove(line);
+        line.setPurchaseOrderHeader(null);
     }
 }

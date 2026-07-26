@@ -1,6 +1,8 @@
 package com.example.Vishalsuriya.ailogistics.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -32,18 +34,23 @@ public class PurchaseReceiptLine {
     @Version
     private Long version;
 
-    @Column(name = "pr_header_id", nullable = false)
-    private Long purchaseReceiptHeaderId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pr_header_id", nullable = false)
+    private PurchaseReceiptHeader purchaseReceiptHeader;
 
-    @Column(name = "po_line_id", nullable = false)
-    private Long purchaseOrderLineId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "po_line_id", nullable = false)
+    private PurchaseOrderLine purchaseOrderLine;
 
-    @Column(name = "product_id",nullable = false)
-    private Long productId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
 
+    @Min(1)
     @Column(name = "quantity_received", nullable = false)
     private Integer quantityReceived;
 
+    @Positive
     @Column(name = "unit_price", nullable = false, precision = 12, scale = 2)
     private BigDecimal unitPrice;
 
@@ -53,25 +60,41 @@ public class PurchaseReceiptLine {
     @Column(length = 500)
     private String remarks;
 
-    @Column(updatable = false)
+    @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
+    @Column(nullable = false)
     private LocalDateTime updatedAt;
 
     @PrePersist
     public void prePersist() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
-        if(unitPrice != null && quantityReceived != null){
-            lineTotal = unitPrice.multiply(BigDecimal.valueOf(quantityReceived));
-        }
+        calculateLineTotal();
     }
 
     @PreUpdate
     public void preUpdate() {
         updatedAt = LocalDateTime.now();
+        calculateLineTotal();
+    }
+    private void calculateLineTotal() {
+
         if(unitPrice != null && quantityReceived != null){
             lineTotal = unitPrice.multiply(BigDecimal.valueOf(quantityReceived));
+        }else{
+            lineTotal = BigDecimal.ZERO;
+        }
+    }
+
+    public void validateReceipt() {
+
+        if(quantityReceived <= 0){
+            throw new IllegalArgumentException("Quantity should be greater than zero.");
+        }
+
+        if(unitPrice.compareTo(BigDecimal.ZERO) <= 0){
+            throw new IllegalArgumentException("Unit price should be greater than zero.");
         }
     }
 }

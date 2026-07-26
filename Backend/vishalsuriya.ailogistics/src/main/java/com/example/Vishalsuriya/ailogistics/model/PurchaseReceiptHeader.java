@@ -1,12 +1,20 @@
 package com.example.Vishalsuriya.ailogistics.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "purchase_receipt_headers")
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class PurchaseReceiptHeader {
 
     @Id
@@ -19,14 +27,17 @@ public class PurchaseReceiptHeader {
     @Column(name = "trx_number", unique = true, nullable = false)
     private String trxNumber;
 
-    @Column(name = "po_header_id", nullable = false)
-    private Long purchaseOrderHeaderId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "po_header_id", nullable = false)
+    private PurchaseOrderHeader purchaseOrderHeader;
 
-    @Column(name = "vendor_id", nullable = false)
-    private Long vendorId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vendor_id", nullable = false)
+    private Vendor vendor;
 
-    @Column(name = "warehouse_id", nullable = false)
-    private Long warehouseId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "warehouse_id", nullable = false)
+    private Warehouse warehouse;
 
     @Column(name = "received_by", nullable = false)
     private String receivedBy;
@@ -35,13 +46,24 @@ public class PurchaseReceiptHeader {
     @Column(nullable = false)
     private PurchaseReceiptStatus status;
 
+    @Column(length = 1000)
+    private String remarks;
+
     @Column(nullable = false)
     private LocalDate receivedDate;
 
-    @Column(updatable = false)
+    @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
+    @Column(nullable = false)
     private LocalDateTime updatedAt;
+
+    @OneToMany(
+            mappedBy = "purchaseReceiptHeader",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<PurchaseReceiptLine> purchaseReceiptLines = new ArrayList<>();
 
     @PrePersist
     public void prePersist() {
@@ -62,59 +84,13 @@ public class PurchaseReceiptHeader {
         updatedAt = LocalDateTime.now();
     }
 
-    public Long getPurchaseOrderHeaderId() {
-        return purchaseOrderHeaderId;
+    public void addPurchaseReceiptLine(PurchaseReceiptLine line) {
+        purchaseReceiptLines.add(line);
+        line.setPurchaseReceiptHeader(this);
     }
 
-    public void setPurchaseOrderHeaderId(Long purchaseOrderHeaderId) {
-        this.purchaseOrderHeaderId = purchaseOrderHeaderId;
-    }
-
-    public Long getVendorId() {
-        return vendorId;
-    }
-
-    public void setVendorId(Long vendorId) {
-        this.vendorId = vendorId;
-    }
-
-    public Long getWarehouseId() {
-        return warehouseId;
-    }
-
-    public void setWarehouseId(Long warehouseId) {
-        this.warehouseId = warehouseId;
-    }
-
-    public String getReceivedBy() {
-        return receivedBy;
-    }
-
-    public void setReceivedBy(String receivedBy) {
-        this.receivedBy = receivedBy;
-    }
-
-    public PurchaseReceiptStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(PurchaseReceiptStatus status) {
-        this.status = status;
-    }
-
-    public LocalDate getReceivedDate() {
-        return receivedDate;
-    }
-
-    public void setReceivedDate(LocalDate receivedDate) {
-        this.receivedDate = receivedDate;
-    }
-
-    public String getTrxNumber() {
-        return trxNumber;
-    }
-
-    public void setTrxNumber(String trxNumber) {
-        this.trxNumber = trxNumber;
+    public void removePurchaseReceiptLine(PurchaseReceiptLine line) {
+        purchaseReceiptLines.remove(line);
+        line.setPurchaseReceiptHeader(null);
     }
 }

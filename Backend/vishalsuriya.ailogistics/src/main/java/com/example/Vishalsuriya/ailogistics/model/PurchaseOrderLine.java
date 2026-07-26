@@ -2,6 +2,11 @@ package com.example.Vishalsuriya.ailogistics.model;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -16,6 +21,9 @@ uniqueConstraints = {
                 }
         )
 })
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class PurchaseOrderLine {
 
     @Id
@@ -25,27 +33,32 @@ public class PurchaseOrderLine {
     @Version
     private Long version;
 
-    @Column(name = "purchase_order_header_id", nullable = false)
-    private Long purchaseOrderHeaderId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "purchase_order_header_id", nullable = false)
+    private PurchaseOrderHeader purchaseOrderHeader;
 
-    @Column(name = "product_id", nullable = false)
-    private Long productId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
 
+    @Min(1)
     @Column(name = "quantity_ordered", nullable = false)
     private Integer quantityOrdered;
 
     @Column(name = "quantity_received", nullable = false)
     private Integer quantityReceived = 0;
 
+    @Positive
     @Column(name = "unit_price", nullable = false)
     private BigDecimal unitPrice;
 
     @Column(name = "line_total", nullable = false)
     private BigDecimal lineTotal;
 
-    @Column(updatable = false)
+    @Column(updatable = false,nullable = false)
     private LocalDateTime createdAt;
 
+    @Column(nullable = false)
     private LocalDateTime updatedAt;
 
     @PrePersist
@@ -72,53 +85,33 @@ public class PurchaseOrderLine {
             this.lineTotal = BigDecimal.ZERO;
         }
     }
-
-    public Long getPurchaseOrderHeaderId() {
-        return purchaseOrderHeaderId;
+    @Transient
+    public Integer getRemainingQuantity() {
+        int ordered = quantityOrdered == null ? 0 : quantityOrdered;
+        int received = quantityReceived == null ? 0 : quantityReceived;
+        return ordered - received;
     }
 
-    public void setPurchaseOrderHeaderId(Long purchaseOrderHeaderId) {
-        this.purchaseOrderHeaderId = purchaseOrderHeaderId;
-    }
+    public void receiveQuantity(Integer quantity) {
 
-    public Long getProductId() {
-        return productId;
-    }
+        if (quantity <= 0) {
+            throw new IllegalArgumentException(
+                    "Received quantity must be greater than zero.");
+        }
 
-    public void setProductId(Long productId) {
-        this.productId = productId;
-    }
+        if (this.quantityReceived + quantity > this.quantityOrdered) {
+            throw new IllegalArgumentException(
+                    "Received quantity exceeds ordered quantity.");
+        }
 
-    public Integer getQuantityOrdered() {
-        return quantityOrdered;
+        this.quantityReceived += quantity;
     }
-
-    public void setQuantityOrdered(Integer quantityOrdered) {
-        this.quantityOrdered = quantityOrdered;
+    @Transient
+    public boolean isCompletelyReceived() {
+        return quantityOrdered.equals(quantityReceived);
     }
-
-    public Integer getQuantityReceived() {
-        return quantityReceived;
+    @Transient
+    public boolean isPartiallyReceived() {
+        return quantityReceived > 0 && quantityReceived < quantityOrdered;
     }
-
-    public void setQuantityReceived(Integer quantityReceived) {
-        this.quantityReceived = quantityReceived;
-    }
-
-    public BigDecimal getUnitPrice() {
-        return unitPrice;
-    }
-
-    public void setUnitPrice(BigDecimal unitPrice) {
-        this.unitPrice = unitPrice;
-    }
-
-    public BigDecimal getLineTotal() {
-        return lineTotal;
-    }
-
-    public void setLineTotal(BigDecimal lineTotal) {
-        this.lineTotal = lineTotal;
-    }
-
 }

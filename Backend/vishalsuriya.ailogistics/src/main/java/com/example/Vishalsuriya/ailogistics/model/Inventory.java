@@ -1,6 +1,10 @@
 package com.example.Vishalsuriya.ailogistics.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -11,6 +15,9 @@ uniqueConstraints = {
                 columnNames = {"product_id","warehouse_id"}
         )
 })
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Inventory {
 
     @Id
@@ -20,28 +27,38 @@ public class Inventory {
     @Version
     private Long version;
 
-    @Column(name = "product_id", nullable = false)
-    private Long productId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
 
-    @Column(name = "warehouse_id", nullable = false)
-    private Long warehouseId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "warehouse_id", nullable = false)
+    private Warehouse warehouse;
 
+    @Min(0)
     @Column(nullable = false)
     private Integer availableStock = 0;
 
+    @Min(0)
     @Column(nullable = false)
     private Integer reservedStock = 0;
 
+    @Min(0)
     @Column(nullable = false)
     private Integer damagedStock = 0;
 
+    @Min(1)
     @Column(nullable = false)
     private Integer minimumThreshold;
 
-    private Integer reorderQuantity;
+    @Min(0)
+    @Column(nullable = false)
+    private Integer reorderQuantity = 0;
 
-    @Column(updatable = false)
+    @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;
+
+    @Column(nullable = false)
     private LocalDateTime updatedAt;
 
     @PrePersist
@@ -53,53 +70,5 @@ public class Inventory {
     @PreUpdate
     public void preUpdate() {
         updatedAt = LocalDateTime.now();
-    }
-
-    public Integer getAvailableStock() {
-        return availableStock;
-    }
-
-    public void setAvailableStock(Integer availableStock) {
-        this.availableStock = availableStock;
-    }
-
-    public Integer getReservedStock() {
-        return reservedStock;
-    }
-
-    public void setReservedStock(Integer reservedStock) {
-        this.reservedStock = reservedStock;
-    }
-
-    public Integer getDamagedStock() {
-        return damagedStock;
-    }
-
-    public void setDamagedStock(Integer damagedStock) {
-        this.damagedStock = damagedStock;
-    }
-
-    public Integer getMinimumThreshold() {
-        return minimumThreshold;
-    }
-
-    public void setMinimumThreshold(Integer minimumThreshold) {
-        this.minimumThreshold = minimumThreshold;
-    }
-
-    public Integer getReorderQuantity() {
-        return reorderQuantity;
-    }
-
-    public void setReorderQuantity(Integer reorderQuantity) {
-        this.reorderQuantity = reorderQuantity;
-    }
-
-    public Long getProductId() {
-        return productId;
-    }
-
-    public Long getWarehouseId() {
-        return warehouseId;
     }
 }
