@@ -2,6 +2,8 @@ package com.example.Vishalsuriya.ailogistics.controller;
 
 
 import com.example.Vishalsuriya.ailogistics.model.Inventory;
+import com.example.Vishalsuriya.ailogistics.model.Product;
+import com.example.Vishalsuriya.ailogistics.model.Warehouse;
 import com.example.Vishalsuriya.ailogistics.service.InventoryService;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,7 +45,7 @@ public class InventoryController {
     }
 
     @GetMapping("/exists/{productId}/{warehouseId}")
-    public boolean existsByProductIdAndWarehouseId(@PathVariable Long productId, @PathVariable Long warehouseId){
+    public boolean existsByProductIdAndWarehouseId(@PathVariable Product productId, @PathVariable Warehouse warehouseId){
         return inventoryService.existsByProductIdAndWarehouseId(productId, warehouseId);
     }
 

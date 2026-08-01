@@ -79,7 +79,7 @@ public class PurchaseReceiptHeaderServiceImpl implements PurchaseReceiptHeaderSe
     @Override
     @Transactional
     public void addPurchaseReceiptHeader(PurchaseReceiptHeader purchaseReceiptHeader) {
-        purchaseOrderHeaderRepo.findById(purchaseReceiptHeader.getPurchaseOrderHeaderId()).
+        purchaseOrderHeaderRepo.findById(purchaseReceiptHeader.getPurchaseOrderHeader().getId()).
                 orElseThrow(() -> new EntityNotFoundException("Purchase Order not found."));
 
        String trxNum = generateTrxNumber();

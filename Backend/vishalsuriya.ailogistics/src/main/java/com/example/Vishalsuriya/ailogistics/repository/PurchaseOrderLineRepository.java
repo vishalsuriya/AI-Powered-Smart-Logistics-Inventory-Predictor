@@ -1,5 +1,7 @@
 package com.example.Vishalsuriya.ailogistics.repository;
 
+import com.example.Vishalsuriya.ailogistics.model.Product;
+import com.example.Vishalsuriya.ailogistics.model.PurchaseOrderHeader;
 import com.example.Vishalsuriya.ailogistics.model.PurchaseOrderLine;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -24,7 +26,7 @@ public interface PurchaseOrderLineRepository extends JpaRepository<PurchaseOrder
     );
 
     boolean existsByPurchaseOrderHeaderIdAndProductId(
-            Long purchaseOrderHeaderId,
-            Long productId
+            PurchaseOrderHeader purchaseOrderHeaderId,
+            Product productId
     );
 }

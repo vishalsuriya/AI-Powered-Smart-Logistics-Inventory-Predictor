@@ -1,5 +1,7 @@
 package com.example.Vishalsuriya.ailogistics.service;
 
+import com.example.Vishalsuriya.ailogistics.model.Product;
+import com.example.Vishalsuriya.ailogistics.model.PurchaseOrderHeader;
 import com.example.Vishalsuriya.ailogistics.model.PurchaseOrderLine;
 
 import java.util.List;
@@ -22,5 +24,5 @@ public interface PurchaseOrderLineService {
 
     public void deletePurchaseOrderLine(Long id);
 
-    public boolean existsByPurchaseOrderHeaderIdAndProductId(Long purchaseOrderHeaderId, Long productId);
+    public boolean existsByPurchaseOrderHeaderIdAndProductId(PurchaseOrderHeader purchaseOrderHeaderId, Product productId);
 }

@@ -1,6 +1,8 @@
 package com.example.Vishalsuriya.ailogistics.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -38,7 +40,8 @@ public class Product {
     @Column(nullable = false, length =  50)
     private String brand;
 
-    @Column(nullable = false)
+    @Positive
+    @Column(nullable = false,precision = 12, scale = 2)
     private BigDecimal purchasePrice;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -56,7 +59,8 @@ public class Product {
     @Column(nullable = false)
     private UnitOfMeasure unitOfMeasure;
 
-    @Column(nullable = false)
+    @PositiveOrZero
+    @Column(nullable = false,precision = 5, scale = 2)
     private BigDecimal taxPercentage;
 
     @Column(unique = true)
@@ -84,5 +88,10 @@ public class Product {
     @PreUpdate
     public void preUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    @Transient
+    public boolean isActive(){
+       return status == ProductStatus.ACTIVE;
     }
 }

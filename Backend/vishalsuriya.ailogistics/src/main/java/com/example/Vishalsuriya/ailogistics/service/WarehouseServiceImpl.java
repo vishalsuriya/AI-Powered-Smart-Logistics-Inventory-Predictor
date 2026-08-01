@@ -58,7 +58,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         existingWarehouse.setEmail(warehouse.getEmail());
         existingWarehouse.setPhoneNumber(warehouse.getPhoneNumber());
         existingWarehouse.setState(warehouse.getState());
-        existingWarehouse.setManagerName(warehouse.getManagerName());
+        existingWarehouse.setWarehouseManager(warehouse.getWarehouseManager());
         existingWarehouse.setWarehouseStatus(warehouse.getWarehouseStatus());
         warehouseRepo.save(existingWarehouse);
     }

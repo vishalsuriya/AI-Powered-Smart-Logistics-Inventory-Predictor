@@ -1,6 +1,8 @@
 package com.example.Vishalsuriya.ailogistics.repository;
 
 import com.example.Vishalsuriya.ailogistics.model.Inventory;
+import com.example.Vishalsuriya.ailogistics.model.Product;
+import com.example.Vishalsuriya.ailogistics.model.Warehouse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -19,7 +21,7 @@ public interface InventoryRepository extends JpaRepository<Inventory,Long> {
     List<Inventory> findByWarehouseId(Long warehouseId);
 
     boolean existsByProductIdAndWarehouseId(
-            Long productId,
-            Long warehouseId
+            Product productId,
+            Warehouse warehouseId
     );
 }

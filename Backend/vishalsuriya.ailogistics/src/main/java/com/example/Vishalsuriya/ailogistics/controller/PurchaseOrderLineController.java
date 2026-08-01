@@ -1,6 +1,8 @@
 package com.example.Vishalsuriya.ailogistics.controller;
 
 
+import com.example.Vishalsuriya.ailogistics.model.Product;
+import com.example.Vishalsuriya.ailogistics.model.PurchaseOrderHeader;
 import com.example.Vishalsuriya.ailogistics.model.PurchaseOrderLine;
 import com.example.Vishalsuriya.ailogistics.service.PurchaseOrderLineService;
 import org.springframework.web.bind.annotation.*;
@@ -48,8 +50,8 @@ public class PurchaseOrderLineController {
 
     @GetMapping("/exists/header/{purchaseOrderHeaderId}/product/{productId}")
     public boolean existsByPurchaseOrderHeaderIdAndProductId(
-            @PathVariable Long purchaseOrderHeaderId,
-            @PathVariable Long productId) {
+            @PathVariable PurchaseOrderHeader purchaseOrderHeaderId,
+            @PathVariable Product productId) {
 
         return purchaseOrderLineService.existsByPurchaseOrderHeaderIdAndProductId(
                 purchaseOrderHeaderId,

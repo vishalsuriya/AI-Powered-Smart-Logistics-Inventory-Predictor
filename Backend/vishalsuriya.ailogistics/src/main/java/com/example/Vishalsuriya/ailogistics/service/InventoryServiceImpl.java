@@ -1,6 +1,8 @@
 package com.example.Vishalsuriya.ailogistics.service;
 
 import com.example.Vishalsuriya.ailogistics.model.Inventory;
+import com.example.Vishalsuriya.ailogistics.model.Product;
+import com.example.Vishalsuriya.ailogistics.model.Warehouse;
 import com.example.Vishalsuriya.ailogistics.repository.InventoryRepository;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
@@ -46,20 +48,20 @@ public class InventoryServiceImpl implements InventoryService{
     }
 
     @Override
-    public boolean existsByProductIdAndWarehouseId(Long productId, Long warehouseId) {
+    public boolean existsByProductIdAndWarehouseId(Product productId, Warehouse warehouseId) {
         return inventoryRepo.existsByProductIdAndWarehouseId(productId, warehouseId);
     }
 
     @Override
     public void addInventory(Inventory inventory) {
         boolean exists = inventoryRepo.existsByProductIdAndWarehouseId(
-                inventory.getProductId(),
-                inventory.getWarehouseId()
+                inventory.getProduct(),
+                inventory.getWarehouse()
         );
         if (exists) {
             throw new EntityExistsException(
-                    "Inventory already exists for Product ID: " + inventory.getProductId() +
-                            " and Warehouse ID: " + inventory.getWarehouseId()
+                    "Inventory already exists for Product ID: " + inventory.getProduct() +
+                            " and Warehouse ID: " + inventory.getWarehouse()
             );
         }
 

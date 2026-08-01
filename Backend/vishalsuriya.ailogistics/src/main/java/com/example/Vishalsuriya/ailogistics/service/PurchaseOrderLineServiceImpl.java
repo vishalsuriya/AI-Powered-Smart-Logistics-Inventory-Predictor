@@ -1,5 +1,6 @@
 package com.example.Vishalsuriya.ailogistics.service;
 
+import com.example.Vishalsuriya.ailogistics.model.Product;
 import com.example.Vishalsuriya.ailogistics.model.PurchaseOrderHeader;
 import com.example.Vishalsuriya.ailogistics.model.PurchaseOrderLine;
 import com.example.Vishalsuriya.ailogistics.repository.PurchaseOrderHeaderRepository;
@@ -55,23 +56,23 @@ public class PurchaseOrderLineServiceImpl implements PurchaseOrderLineService {
     @Override
     @Transactional
     public void addPurchaseOrderLine(PurchaseOrderLine purchaseOrderLine) {
-        purchaseOrderHeaderRepo.findById(purchaseOrderLine.getPurchaseOrderHeaderId()).
+        purchaseOrderHeaderRepo.findById(purchaseOrderLine.getPurchaseOrderHeader().getId()).
                 orElseThrow(() ->
                 new EntityNotFoundException(
                         "Purchase Order Header not found."
                 )
         );
         boolean exists = purchaseOrderLineRepo.existsByPurchaseOrderHeaderIdAndProductId(
-                purchaseOrderLine.getPurchaseOrderHeaderId(),
-                purchaseOrderLine.getProductId()
+                purchaseOrderLine.getPurchaseOrderHeader(),
+                purchaseOrderLine.getProduct()
         );
 
         if (exists) {
-            throw new EntityExistsException("Product ID " + purchaseOrderLine.getProductId() +
+            throw new EntityExistsException("Product ID " + purchaseOrderLine.getProduct() +
                     " is already added to this Purchase Order. Update the existing line quantity instead.");
         }
         purchaseOrderLineRepo.save(purchaseOrderLine);
-       recalculateTotalAndSaveHeader(purchaseOrderLine.getPurchaseOrderHeaderId());
+       recalculateTotalAndSaveHeader(purchaseOrderLine.getPurchaseOrderHeader());
     }
 
     @Override
@@ -83,7 +84,7 @@ public class PurchaseOrderLineServiceImpl implements PurchaseOrderLineService {
         existingPurchaseOrderLine.setUnitPrice(purchaseOrderLine.getUnitPrice());
         existingPurchaseOrderLine.setQuantityReceived(purchaseOrderLine.getQuantityReceived());
         purchaseOrderLineRepo.save(existingPurchaseOrderLine);
-        recalculateTotalAndSaveHeader(existingPurchaseOrderLine.getPurchaseOrderHeaderId());
+        recalculateTotalAndSaveHeader(existingPurchaseOrderLine.getPurchaseOrderHeader());
     }
 
     @Override
@@ -92,20 +93,20 @@ public class PurchaseOrderLineServiceImpl implements PurchaseOrderLineService {
         PurchaseOrderLine existingPurchaseOrderLine = purchaseOrderLineRepo.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Cannot delete. Purchase order line not found with ID: " + id));
 
-        Long headerId = existingPurchaseOrderLine.getPurchaseOrderHeaderId();
+        PurchaseOrderHeader header = existingPurchaseOrderLine.getPurchaseOrderHeader();
         purchaseOrderLineRepo.delete(existingPurchaseOrderLine);
-        recalculateTotalAndSaveHeader(headerId);
+        recalculateTotalAndSaveHeader(header);
     }
 
     @Override
-    public boolean existsByPurchaseOrderHeaderIdAndProductId(Long purchaseOrderHeaderId, Long productId) {
+    public boolean existsByPurchaseOrderHeaderIdAndProductId(PurchaseOrderHeader purchaseOrderHeaderId, Product productId) {
         return purchaseOrderLineRepo.existsByPurchaseOrderHeaderIdAndProductId(purchaseOrderHeaderId, productId);
     }
 
-    private void recalculateTotalAndSaveHeader(Long headerId){
-        PurchaseOrderHeader existingHeader =  purchaseOrderHeaderRepo.findById(headerId).
-                orElseThrow(() -> new EntityNotFoundException("purchase header not found with ID." + headerId));
-        List<PurchaseOrderLine> purchaseOrderLines = purchaseOrderLineRepo.findByPurchaseOrderHeaderId(headerId);
+    private void recalculateTotalAndSaveHeader(PurchaseOrderHeader header){
+        PurchaseOrderHeader existingHeader =  purchaseOrderHeaderRepo.findById(header.getId()).
+                orElseThrow(() -> new EntityNotFoundException("purchase header not found with ID." + header.getId()));
+        List<PurchaseOrderLine> purchaseOrderLines = purchaseOrderLineRepo.findByPurchaseOrderHeaderId(header.getId());
         BigDecimal calculatedTotal = purchaseOrderLines.stream()
                         .map(PurchaseOrderLine :: getLineTotal)
                         .reduce(BigDecimal.ZERO, BigDecimal :: add);
