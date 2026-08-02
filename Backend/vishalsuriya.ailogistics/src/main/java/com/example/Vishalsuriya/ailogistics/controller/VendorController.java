@@ -1,7 +1,11 @@
 package com.example.Vishalsuriya.ailogistics.controller;
 
 import com.example.Vishalsuriya.ailogistics.model.Vendor;
+import com.example.Vishalsuriya.ailogistics.model.VendorStatus;
 import com.example.Vishalsuriya.ailogistics.service.VendorService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,36 +16,67 @@ public class VendorController {
 
     private final VendorService vendorService;
 
-    public VendorController(VendorService vendorService) {
+    public VendorController(final VendorService vendorService) {
         this.vendorService = vendorService;
     }
 
     @GetMapping
-    public List<Vendor> getAllVendors(){
-        return vendorService.getAllVendors();
+    public ResponseEntity<List<Vendor>> getAllVendors() {
+        return ResponseEntity.ok(vendorService.getAllVendors());
     }
 
     @GetMapping("/{vendorId}")
-    public Vendor getVendorById(@PathVariable Long vendorId){
-        return vendorService.getVendorById(vendorId);
+    public ResponseEntity<Vendor> getVendorById(@PathVariable final Long vendorId) {
+        return ResponseEntity.ok(vendorService.getVendorById(vendorId));
     }
 
     @GetMapping("/code/{vendorCode}")
-    public Vendor getVendorByVendorCode(@PathVariable String vendorCode){
-        return vendorService.getVendorByVendorCode(vendorCode);
+    public ResponseEntity<Vendor> getByVendorCode(@PathVariable final String vendorCode) {
+        return ResponseEntity.ok(vendorService.getByVendorCode(vendorCode));
     }
+
+    @GetMapping("/company-name/{companyName}")
+    public ResponseEntity<Vendor> getByCompanyName(@PathVariable final String companyName) {
+        return ResponseEntity.ok(vendorService.getByCompanyName(companyName));
+    }
+
+    @GetMapping("/email/{email}")
+    public ResponseEntity<Vendor> getByEmail(@PathVariable final String email) {
+        return ResponseEntity.ok(vendorService.getByEmail(email));
+    }
+
+    @GetMapping("/contact-number/{contactNumber}")
+    public ResponseEntity<Vendor> getByContactNumber(@PathVariable final String contactNumber) {
+        return ResponseEntity.ok(vendorService.getByContactNumber(contactNumber));
+    }
+
+    @GetMapping("/status/{status}")
+    public ResponseEntity<List<Vendor>> getByVendorStatus(@PathVariable final VendorStatus status) {
+        return ResponseEntity.ok(vendorService.getByVendorStatus(status));
+    }
+    
     @PostMapping
-    public void addVendor(@RequestBody Vendor vendor){
-        vendorService.addVendor(vendor);
+    public ResponseEntity<Vendor> createVendor(@RequestBody @Valid final Vendor vendor) {
+        final Vendor savedVendor = vendorService.createVendor(vendor);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedVendor);
     }
 
     @PutMapping("/{vendorId}")
-    public void updateVendor(@PathVariable Long vendorId, @RequestBody Vendor vendor){
+    public ResponseEntity<Void> updateVendor(@PathVariable final Long vendorId, @Valid @RequestBody final Vendor vendor) {
         vendorService.updateVendor(vendorId, vendor);
+        return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{vendorId}")
-    public  void deleteVendor(@PathVariable Long vendorId){
-        vendorService.deleteVendor(vendorId);
+    @PutMapping("/{vendorId}/activate")
+    public ResponseEntity<Void> activateVendor(@PathVariable final Long vendorId) {
+        vendorService.activateVendor(vendorId);
+        return ResponseEntity.ok().build();
     }
+
+    @PutMapping("/{vendorId}/deactivate")
+    public ResponseEntity<Void> deactivateVendor(@PathVariable final Long vendorId) {
+        vendorService.deactivateVendor(vendorId);
+        return ResponseEntity.ok().build();
+    }
+
 }

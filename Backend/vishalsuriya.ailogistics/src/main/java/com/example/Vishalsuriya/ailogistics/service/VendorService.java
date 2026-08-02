@@ -1,20 +1,43 @@
 package com.example.Vishalsuriya.ailogistics.service;
 
 import com.example.Vishalsuriya.ailogistics.model.Vendor;
+import com.example.Vishalsuriya.ailogistics.model.VendorStatus;
 
 import java.util.List;
 
 public interface VendorService {
 
-    public List<Vendor> getAllVendors();
+    List<Vendor> getAllVendors();
 
-    public Vendor getVendorById(Long vendorId);
+    Vendor getVendorById(Long vendorId);
 
-    public Vendor getVendorByVendorCode(String vendorCode);
+    Vendor getByVendorCode(String vendorCode);
 
-    public void addVendor(Vendor vendor);
+    Vendor getByCompanyName(String companyName);
 
-    public void updateVendor(Long vendorId, Vendor vendor);
+    Vendor getByEmail(String email);
 
-    public void deleteVendor(Long vendorId);
+    Vendor getByContactNumber(String contactNumber);
+
+    List<Vendor> getByVendorStatus(VendorStatus vendorStatus);
+
+    Vendor createVendor(Vendor vendor);
+
+    Vendor updateVendor(Long vendorId, Vendor vendor);
+
+    void activateVendor(Long vendorId);
+
+    void deactivateVendor(Long vendorId);
+
+    boolean existsById(Long vendorId);
+
+    boolean existsByVendorCode(String vendorCode);
+
+    boolean existsByCompanyName(String companyName);
+
+    boolean existsByEmail(String email);
+
+    boolean existsByTaxNumber(String taxNumber);
+
+    boolean existsByContactNumber(String contactNumber);
 }
