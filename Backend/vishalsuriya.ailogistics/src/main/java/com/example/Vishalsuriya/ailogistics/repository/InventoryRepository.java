@@ -21,7 +21,14 @@ public interface InventoryRepository extends JpaRepository<Inventory,Long> {
     List<Inventory> findByWarehouseId(Long warehouseId);
 
     boolean existsByProductIdAndWarehouseId(
-            Product productId,
-            Warehouse warehouseId
+            Long productId,
+            Long warehouseId
     );
+
+    boolean existsByProductAndWarehouse(
+            Product product,
+            Warehouse warehouse
+    );
+
+    List<Inventory> findByQuantityOnHandLessThanEqual(Integer threshold);
 }

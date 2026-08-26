@@ -1,10 +1,9 @@
 package com.example.Vishalsuriya.ailogistics.controller;
 
-
 import com.example.Vishalsuriya.ailogistics.model.Inventory;
-import com.example.Vishalsuriya.ailogistics.model.Product;
-import com.example.Vishalsuriya.ailogistics.model.Warehouse;
 import com.example.Vishalsuriya.ailogistics.service.InventoryService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,52 +14,63 @@ public class InventoryController {
 
     private final InventoryService inventoryService;
 
-    public InventoryController(InventoryService inventoryService){
+    public InventoryController(final InventoryService inventoryService) {
         this.inventoryService = inventoryService;
     }
 
     @GetMapping
-    public List<Inventory> getAllInventories(){
-       return inventoryService.getAllInventories();
+    public ResponseEntity<List<Inventory>> getAllInventories() {
+        return ResponseEntity.ok(inventoryService.getAllInventories()
+        );
     }
 
     @GetMapping("/{inventoryId}")
-    public Inventory getInventoryById(@PathVariable  Long inventoryId){
-        return inventoryService.getInventoryById(inventoryId);
+    public ResponseEntity<Inventory> getInventoryById(@PathVariable final Long inventoryId) {
+        return ResponseEntity.ok(inventoryService.getInventoryById(inventoryId)
+        );
     }
 
     @GetMapping("/product/{productId}/warehouse/{warehouseId}")
-    public Inventory getInventoryByProductIdAndWarehouseId(@PathVariable Long productId, @PathVariable Long warehouseId){
-        return inventoryService.getInventoryByProductIdAndWarehouseId(productId, warehouseId);
+    public ResponseEntity<Inventory> getInventoryByProductIdAndWarehouseId(
+            @PathVariable final Long productId,
+            @PathVariable final Long warehouseId) {
+
+        return ResponseEntity.ok(inventoryService.getInventoryByProductIdAndWarehouseId(productId, warehouseId));
     }
 
     @GetMapping("/product/{productId}")
-    public List<Inventory> getByProductId(@PathVariable Long productId){
-        return inventoryService.getByProductId(productId);
+    public ResponseEntity<List<Inventory>> getByProductId(@PathVariable final Long productId) {
+        return ResponseEntity.ok(inventoryService.getByProductId(productId));
     }
 
     @GetMapping("/warehouse/{warehouseId}")
-    public List<Inventory> getByWarehouseId(@PathVariable Long warehouseId){
-        return inventoryService.getByWarehouseId(warehouseId);
+    public ResponseEntity<List<Inventory>> getByWarehouseId(@PathVariable final Long warehouseId) {
+        return ResponseEntity.ok(inventoryService.getByWarehouseId(warehouseId));
     }
 
-    @GetMapping("/exists/{productId}/{warehouseId}")
-    public boolean existsByProductIdAndWarehouseId(@PathVariable Product productId, @PathVariable Warehouse warehouseId){
-        return inventoryService.existsByProductIdAndWarehouseId(productId, warehouseId);
+    @GetMapping("/low-stock")
+    public ResponseEntity<List<Inventory>> getLowStockInventories(@RequestParam final Integer threshold) {
+
+        return ResponseEntity.ok(inventoryService.getLowStockInventories(threshold));
     }
 
     @PostMapping
-    public void addInventory(@RequestBody  Inventory inventory){
+    public ResponseEntity<Void> addInventory(@RequestBody final Inventory inventory) {
+
         inventoryService.addInventory(inventory);
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PutMapping("/{inventoryId}")
-    public void updateInventory(@PathVariable Long inventoryId, @RequestBody Inventory inventory){
+    public ResponseEntity<Void> updateInventory(@PathVariable final Long inventoryId, @RequestBody final Inventory inventory) {
         inventoryService.updateInventory(inventoryId, inventory);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{inventoryId}")
-    public void deleteInventory(@PathVariable Long inventoryId){
+    public ResponseEntity<Void> deleteInventory(@PathVariable final Long inventoryId) {
         inventoryService.deleteInventory(inventoryId);
+        return ResponseEntity.noContent().build();
     }
 }

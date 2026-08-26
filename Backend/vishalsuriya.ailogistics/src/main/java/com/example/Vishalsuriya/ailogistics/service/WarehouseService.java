@@ -1,23 +1,30 @@
 package com.example.Vishalsuriya.ailogistics.service;
 
-
 import com.example.Vishalsuriya.ailogistics.model.Warehouse;
 
 import java.util.List;
 
 public interface WarehouseService {
 
-    public List<Warehouse> getAllWarehouses();
+    List<Warehouse> getAllWarehouses();
 
-    public Warehouse getWarehouseById(Long Id);
+    Warehouse getWarehouseById(Long warehouseId);
 
-    public Warehouse getWarehouseByWarehouseCode(String warehouseCode);
+    Warehouse getWarehouseByWarehouseCode(String warehouseCode);
 
-   public String generateWarehouseCode();
+    String generateWarehouseCode();
 
-   public void addWarehouse(Warehouse warehouse);
+    void addWarehouse(Warehouse warehouse);
 
-    public void updateWarehouse(Long warehouseId, Warehouse warehouse);
+    void updateWarehouse(Long warehouseId, Warehouse warehouse);
 
-   public void deleteWarehouse(Long Id);
+    void deleteWarehouse(Long warehouseId);
+
+    boolean existsByWarehouseCode(String warehouseCode);
+
+    boolean existsByWarehouseName(String warehouseName);
+
+    boolean existsByEmail(String email);
+
+    boolean existsByPhoneNumber(String phoneNumber);
 }

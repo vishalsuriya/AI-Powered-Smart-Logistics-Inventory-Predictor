@@ -8,21 +8,34 @@ import java.util.List;
 
 public interface InventoryService {
 
-    public List<Inventory> getAllInventories();
+    List<Inventory> getAllInventories();
 
-    public Inventory getInventoryById(Long inventoryId);
+    Inventory getInventoryById(Long inventoryId);
 
-    public Inventory getInventoryByProductIdAndWarehouseId(Long productId, Long warehouseId);
+    Inventory getInventoryByProductIdAndWarehouseId(
+            Long productId,
+            Long warehouseId
+    );
 
-    public List<Inventory> getByProductId(Long productId);
+    List<Inventory> getByProductId(Long productId);
 
-    public List<Inventory> getByWarehouseId(Long warehouseId);
+    List<Inventory> getByWarehouseId(Long warehouseId);
 
-    public boolean existsByProductIdAndWarehouseId(Product productId, Warehouse warehouseId);
+    boolean existsByProductAndWarehouse(
+            Product product,
+            Warehouse warehouse
+    );
 
-    public void addInventory(Inventory inventory);
+    boolean existsByProductIdAndWarehouseId(
+            Long productId,
+            Long warehouseId
+    );
 
-    public void updateInventory(Long inventoryId, Inventory inventory);
+    void addInventory(Inventory inventory);
 
-    public void deleteInventory(Long inventoryId);
+    void updateInventory(Long inventoryId, Inventory inventory);
+
+    void deleteInventory(Long inventoryId);
+
+    List<Inventory> getLowStockInventories(Integer threshold);
 }

@@ -2,6 +2,9 @@ package com.example.Vishalsuriya.ailogistics.controller;
 
 import com.example.Vishalsuriya.ailogistics.model.Warehouse;
 import com.example.Vishalsuriya.ailogistics.service.WarehouseService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,37 +15,41 @@ public class WarehouseController {
 
     private final WarehouseService warehouseService;
 
-    public WarehouseController(WarehouseService warehouseService){
+    public WarehouseController(final WarehouseService warehouseService) {
         this.warehouseService  = warehouseService;
     }
 
     @GetMapping
-    public List<Warehouse> getAllWarehouses(){
-        return warehouseService.getAllWarehouses();
+    public ResponseEntity<List<Warehouse>> getAllWarehouses() {
+        return ResponseEntity.ok(warehouseService.getAllWarehouses());
     }
 
     @GetMapping("/{warehouseId}")
-    public Warehouse getWarehouseById(@PathVariable Long warehouseId){
-        return warehouseService.getWarehouseById(warehouseId);
+    public ResponseEntity<Warehouse> getWarehouseById(@PathVariable final Long warehouseId) {
+        return ResponseEntity.ok(warehouseService.getWarehouseById(warehouseId));
     }
 
     @GetMapping("/code/{warehouseCode}")
-    public Warehouse getWarehouseByWarehouseCode(@PathVariable String warehouseCode){
-        return warehouseService.getWarehouseByWarehouseCode(warehouseCode);
+    public ResponseEntity<Warehouse> getWarehouseByWarehouseCode(@PathVariable final String warehouseCode) {
+        return ResponseEntity.ok(warehouseService.getWarehouseByWarehouseCode(warehouseCode));
     }
 
     @PostMapping
-    public void addWarehouse(@RequestBody Warehouse warehouse){
+    public ResponseEntity<Void> addWarehouse(@Valid @RequestBody final Warehouse warehouse) {
         warehouseService.addWarehouse(warehouse);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PutMapping("/{warehouseId}")
-    public void updateWarehouse(@PathVariable Long warehouseId, @RequestBody Warehouse warehouse){
+    public ResponseEntity<Void> updateWarehouse(@PathVariable final Long warehouseId, @Valid @RequestBody final Warehouse warehouse) {
         warehouseService.updateWarehouse(warehouseId,warehouse);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{warehouseId}")
-    public void deleteWarehouse(@PathVariable Long warehouseId){
+    public ResponseEntity<Void> deleteWarehouse(@PathVariable final Long warehouseId) {
         warehouseService.deleteWarehouse(warehouseId);
+        return ResponseEntity.noContent().build();
     }
+
 }

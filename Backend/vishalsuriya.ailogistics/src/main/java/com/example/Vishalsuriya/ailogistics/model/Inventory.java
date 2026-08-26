@@ -1,5 +1,6 @@
 package com.example.Vishalsuriya.ailogistics.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
@@ -7,6 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+
 
 @Entity
 @Table(name = "inventory",
@@ -28,16 +31,18 @@ public class Inventory {
     private Long version;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @JoinColumn(name = "warehouse_id", nullable = false)
     private Warehouse warehouse;
 
     @Min(0)
     @Column(nullable = false)
-    private Integer availableStock = 0;
+    private Integer quantityOnHand = 0;
 
     @Min(0)
     @Column(nullable = false)
@@ -63,12 +68,17 @@ public class Inventory {
 
     @PrePersist
     public void prePersist() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
+        createdAt = LocalDateTime.now(ZoneOffset.UTC);
+        updatedAt = LocalDateTime.now(ZoneOffset.UTC);
     }
 
     @PreUpdate
     public void preUpdate() {
-        updatedAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now(ZoneOffset.UTC);
+    }
+
+    @Transient
+    public Integer getAvailableStock() {
+        return Math.max(0, quantityOnHand - reservedStock - damagedStock);
     }
 }
