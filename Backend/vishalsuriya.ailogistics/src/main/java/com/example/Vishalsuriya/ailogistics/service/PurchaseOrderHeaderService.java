@@ -7,28 +7,32 @@ import java.util.List;
 
 public interface PurchaseOrderHeaderService {
 
-    public List<PurchaseOrderHeader> getAllPurchaseOrderHeaders();
+    List<PurchaseOrderHeader> getAllPurchaseOrderHeaders();
 
-    public PurchaseOrderHeader getPurchaseOrderHeaderById(Long id);
+    PurchaseOrderHeader getPurchaseOrderHeaderById(Long id);
 
-    public PurchaseOrderHeader getPurchaseOrderHeaderByTrxNumber(String trxNumber);
+    PurchaseOrderHeader getPurchaseOrderHeaderByTrxNumber(String trxNumber);
 
-    public List<PurchaseOrderHeader> getPurchaseOrderHeadersByVendorId(Long vendorId);
+    List<PurchaseOrderHeader> getPurchaseOrderHeadersByVendorId(Long vendorId);
 
-    public List<PurchaseOrderHeader> getPurchaseOrderHeadersByWarehouseId(Long warehouseId);
+    List<PurchaseOrderHeader> getPurchaseOrderHeadersByWarehouseId(Long warehouseId);
 
-    public List<PurchaseOrderHeader> getPurchaseOrderHeadersByStatus(
+    List<PurchaseOrderHeader> getPurchaseOrderHeadersByStatus(
             PurchaseOrderStatus status
     );
 
-    public String generateTrxNumber();
+    String generateTrxNumber();
 
-   public void addPurchaseOrderHeader(PurchaseOrderHeader purchaseOrder);
+    void addPurchaseOrderHeader(PurchaseOrderHeader purchaseOrder);
 
-    public void updatePurchaseOrderHeader(
+    void updatePurchaseOrderHeader(
             Long id,
             PurchaseOrderHeader purchaseOrder
     );
 
-    public void deletePurchaseOrderHeader(Long id);
+    void approvePurchaseOrder(Long id);
+
+    void cancelPurchaseOrder(Long id);
+
+    void deletePurchaseOrderHeader(Long id);
 }

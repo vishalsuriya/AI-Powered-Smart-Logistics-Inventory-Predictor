@@ -1,6 +1,7 @@
 package com.example.Vishalsuriya.ailogistics.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
@@ -33,10 +34,12 @@ public class PurchaseOrderLine {
     @Version
     private Long version;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "purchase_order_header_id", nullable = false)
     private PurchaseOrderHeader purchaseOrderHeader;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
@@ -87,12 +90,12 @@ public class PurchaseOrderLine {
     }
     @Transient
     public Integer getRemainingQuantity() {
-        int ordered = quantityOrdered == null ? 0 : quantityOrdered;
-        int received = quantityReceived == null ? 0 : quantityReceived;
+        final int ordered = quantityOrdered == null ? 0 : quantityOrdered;
+        final int received = quantityReceived == null ? 0 : quantityReceived;
         return ordered - received;
     }
 
-    public void receiveQuantity(Integer quantity) {
+    public void receiveQuantity(final Integer quantity) {
 
         if (quantity <= 0) {
             throw new IllegalArgumentException(

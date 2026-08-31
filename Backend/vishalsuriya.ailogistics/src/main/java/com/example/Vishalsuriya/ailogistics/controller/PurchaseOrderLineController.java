@@ -1,10 +1,10 @@
 package com.example.Vishalsuriya.ailogistics.controller;
 
-
-import com.example.Vishalsuriya.ailogistics.model.Product;
-import com.example.Vishalsuriya.ailogistics.model.PurchaseOrderHeader;
 import com.example.Vishalsuriya.ailogistics.model.PurchaseOrderLine;
 import com.example.Vishalsuriya.ailogistics.service.PurchaseOrderLineService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,65 +12,111 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/purchaseOrderLines")
 public class PurchaseOrderLineController {
+
     private final PurchaseOrderLineService purchaseOrderLineService;
 
-    public PurchaseOrderLineController(PurchaseOrderLineService purchaseOrderLineService) {
+    public PurchaseOrderLineController(
+            final PurchaseOrderLineService purchaseOrderLineService) {
+
         this.purchaseOrderLineService = purchaseOrderLineService;
     }
 
     @GetMapping
-    public List<PurchaseOrderLine> getAllPurchaseOrderLines() {
-        return purchaseOrderLineService.getAllPurchaseOrderLines();
+    public ResponseEntity<List<PurchaseOrderLine>> getAllPurchaseOrderLines() {
+
+        return ResponseEntity.ok(
+                purchaseOrderLineService.getAllPurchaseOrderLines()
+        );
     }
 
     @GetMapping("/{id}")
-    public PurchaseOrderLine getPurchaseOrderLineById(@PathVariable Long id) {
-        return purchaseOrderLineService.getPurchaseOrderLineById(id);
+    public ResponseEntity<PurchaseOrderLine> getPurchaseOrderLineById(
+            @PathVariable final Long id) {
+
+        return ResponseEntity.ok(
+                purchaseOrderLineService.getPurchaseOrderLineById(id)
+        );
     }
 
     @GetMapping("/header/{purchaseOrderHeaderId}/product/{productId}")
-    public PurchaseOrderLine getByPurchaseOrderHeaderIdAndProductId(
-            @PathVariable Long purchaseOrderHeaderId,
-            @PathVariable Long productId) {
+    public ResponseEntity<PurchaseOrderLine>
+    getByPurchaseOrderHeaderIdAndProductId(
+            @PathVariable final Long purchaseOrderHeaderId,
+            @PathVariable final Long productId) {
 
-        return purchaseOrderLineService.getByPurchaseOrderHeaderIdAndProductId(purchaseOrderHeaderId, productId);
+        return ResponseEntity.ok(
+                purchaseOrderLineService
+                        .getByPurchaseOrderHeaderIdAndProductId(
+                                purchaseOrderHeaderId,
+                                productId
+                        )
+        );
     }
 
     @GetMapping("/product/{productId}")
-    public List<PurchaseOrderLine> getByProductId(@PathVariable Long productId) {
-        return purchaseOrderLineService.getByProductId(productId);
+    public ResponseEntity<List<PurchaseOrderLine>> getByProductId(
+            @PathVariable final Long productId) {
+
+        return ResponseEntity.ok(
+                purchaseOrderLineService.getByProductId(productId)
+        );
     }
 
     @GetMapping("/header/{purchaseOrderHeaderId}")
-    public List<PurchaseOrderLine> getByPurchaseOrderHeaderId(
-            @PathVariable Long purchaseOrderHeaderId) {
+    public ResponseEntity<List<PurchaseOrderLine>>
+    getByPurchaseOrderHeaderId(
+            @PathVariable final Long purchaseOrderHeaderId) {
 
-        return purchaseOrderLineService.getByPurchaseOrderHeaderId(purchaseOrderHeaderId);
+        return ResponseEntity.ok(
+                purchaseOrderLineService
+                        .getByPurchaseOrderHeaderId(purchaseOrderHeaderId)
+        );
     }
 
     @GetMapping("/exists/header/{purchaseOrderHeaderId}/product/{productId}")
-    public boolean existsByPurchaseOrderHeaderIdAndProductId(
-            @PathVariable PurchaseOrderHeader purchaseOrderHeaderId,
-            @PathVariable Product productId) {
+    public ResponseEntity<Boolean>
+    existsByPurchaseOrderHeaderIdAndProductId(
+            @PathVariable final Long purchaseOrderHeaderId,
+            @PathVariable final Long productId) {
 
-        return purchaseOrderLineService.existsByPurchaseOrderHeaderIdAndProductId(
-                purchaseOrderHeaderId,
-                productId
+        return ResponseEntity.ok(
+                purchaseOrderLineService
+                        .existsByPurchaseOrderHeaderIdAndProductId(
+                                purchaseOrderHeaderId,
+                                productId
+                        )
         );
     }
 
     @PostMapping
-    public void addPurchaseOrderLine(@RequestBody PurchaseOrderLine purchaseOrderLine) {
+    public ResponseEntity<Void> addPurchaseOrderLine(
+            @Valid @RequestBody final PurchaseOrderLine purchaseOrderLine) {
+
         purchaseOrderLineService.addPurchaseOrderLine(purchaseOrderLine);
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PutMapping("/{id}")
-    public void updatePurchaseOrderLine(@PathVariable Long id, @RequestBody PurchaseOrderLine purchaseOrderLine) {
-        purchaseOrderLineService.updatePurchaseOrderLine(id, purchaseOrderLine);
+    public ResponseEntity<Void> updatePurchaseOrderLine(
+            @PathVariable final Long id,
+            @Valid @RequestBody final PurchaseOrderLine purchaseOrderLine) {
+
+        purchaseOrderLineService.updatePurchaseOrderLine(
+                id,
+                purchaseOrderLine
+        );
+
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
-    public void deletePurchaseOrderLine(@PathVariable Long id) {
+    public ResponseEntity<Void> deletePurchaseOrderLine(
+            @PathVariable final Long id) {
+
         purchaseOrderLineService.deletePurchaseOrderLine(id);
+
+        return ResponseEntity.noContent().build();
     }
+
 }
