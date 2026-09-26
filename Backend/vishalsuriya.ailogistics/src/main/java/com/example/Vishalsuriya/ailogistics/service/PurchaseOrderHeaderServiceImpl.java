@@ -140,6 +140,32 @@ public class PurchaseOrderHeaderServiceImpl implements PurchaseOrderHeaderServic
         purchaseOrderHeaderRepo.delete(existingPO);
     }
 
+    @Override
+    public void updatePurchaseOrderReceivingStatus(final Long purchaseOrderId) {
+        final PurchaseOrderHeader pHeader = getPurchaseOrderHeaderById(purchaseOrderId);
+        if (pHeader.getPurchaseOrderLines() == null || pHeader.getPurchaseOrderLines().isEmpty()) {
+            return;
+        }
+        boolean hasReceivedQuantity = false;
+        boolean fullyReceived = true;
+
+        for (final PurchaseOrderLine poLine : pHeader.getPurchaseOrderLines()) {
+            final int ordered = poLine.getQuantityOrdered();
+            final int received = poLine.getQuantityReceived() == null ? 0 : poLine.getQuantityReceived();
+            if (received > 0) {
+                hasReceivedQuantity = true;
+            }
+            if (received < ordered) {
+                fullyReceived = false;
+            }
+        }
+        if (fullyReceived) {
+            pHeader.setStatus(PurchaseOrderStatus.RECEIVED);
+        } else if (hasReceivedQuantity) {
+            pHeader.setStatus(PurchaseOrderStatus.PARTIALLY_RECEIVED);
+        }
+    }
+
     private void validateForCreate(final PurchaseOrderHeader purchaseOrder) {
         validateForeignKeys(purchaseOrder);
         validateDates(purchaseOrder);
@@ -151,6 +177,11 @@ public class PurchaseOrderHeaderServiceImpl implements PurchaseOrderHeaderServic
     }
 
     private void validateForeignKeys(final PurchaseOrderHeader purchaseOrder) {
+        System.out.println("Vendor ID received: "
+                + purchaseOrder.getVendor().getId());
+
+        System.out.println("Vendor exists: "
+                + vendorRepo.existsById(purchaseOrder.getVendor().getId()));
         if (purchaseOrder.getVendor() == null || purchaseOrder.getVendor().getId() == null ||
                 !vendorRepo.existsById(purchaseOrder.getVendor().getId())) {
             throw new IllegalArgumentException("Vendor does not exist with the provided ID.");

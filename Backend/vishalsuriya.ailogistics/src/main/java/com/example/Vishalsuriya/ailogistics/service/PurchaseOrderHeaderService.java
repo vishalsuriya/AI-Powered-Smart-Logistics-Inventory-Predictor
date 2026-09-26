@@ -35,4 +35,6 @@ public interface PurchaseOrderHeaderService {
     void cancelPurchaseOrder(Long id);
 
     void deletePurchaseOrderHeader(Long id);
+
+    void updatePurchaseOrderReceivingStatus(Long purchaseOrderId);
 }

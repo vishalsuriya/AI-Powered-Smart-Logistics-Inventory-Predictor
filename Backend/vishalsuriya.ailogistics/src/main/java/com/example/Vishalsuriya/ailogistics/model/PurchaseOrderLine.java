@@ -1,7 +1,6 @@
 package com.example.Vishalsuriya.ailogistics.model;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
@@ -34,12 +33,10 @@ public class PurchaseOrderLine {
     @Version
     private Long version;
 
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "purchase_order_header_id", nullable = false)
     private PurchaseOrderHeader purchaseOrderHeader;
 
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;

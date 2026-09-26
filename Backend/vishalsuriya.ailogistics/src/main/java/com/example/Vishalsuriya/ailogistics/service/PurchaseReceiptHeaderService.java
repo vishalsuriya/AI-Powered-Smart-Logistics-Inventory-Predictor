@@ -2,6 +2,7 @@ package com.example.Vishalsuriya.ailogistics.service;
 
 import com.example.Vishalsuriya.ailogistics.model.PurchaseReceiptHeader;
 import com.example.Vishalsuriya.ailogistics.model.PurchaseReceiptStatus;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -32,4 +33,7 @@ public interface PurchaseReceiptHeaderService {
     public void updatePurchaseReceiptHeader(Long id, PurchaseReceiptHeader purchaseReceiptHeader);
 
     public void deletePurchaseReceiptHeader(Long id);
+
+    @Transactional
+    void commitPurchaseReceipt(Long id);
 }

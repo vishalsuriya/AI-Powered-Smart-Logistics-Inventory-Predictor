@@ -1,11 +1,9 @@
 package com.example.Vishalsuriya.ailogistics.controller;
-
-
 import com.example.Vishalsuriya.ailogistics.model.PurchaseReceiptHeader;
 import com.example.Vishalsuriya.ailogistics.model.PurchaseReceiptStatus;
 import com.example.Vishalsuriya.ailogistics.service.PurchaseReceiptHeaderService;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -15,55 +13,84 @@ public class PurchaseReceiptHeaderController {
 
     private final PurchaseReceiptHeaderService purchaseReceiptHeaderService;
 
-    public PurchaseReceiptHeaderController(PurchaseReceiptHeaderService purchaseReceiptHeaderService) {
+    public PurchaseReceiptHeaderController(
+            final PurchaseReceiptHeaderService purchaseReceiptHeaderService) {
         this.purchaseReceiptHeaderService = purchaseReceiptHeaderService;
     }
 
-    public List<PurchaseReceiptHeader> getAllPurchaseReceiptHeaders(){
+    @GetMapping
+    public List<PurchaseReceiptHeader> getAllPurchaseReceiptHeaders() {
         return purchaseReceiptHeaderService.getAllPurchaseReceiptHeaders();
     }
 
-    public PurchaseReceiptHeader getPurchaseReceiptHeaderById(Long id){
+    @GetMapping("/{id}")
+    public PurchaseReceiptHeader getPurchaseReceiptHeaderById(@PathVariable final Long id) {
         return purchaseReceiptHeaderService.getPurchaseReceiptHeaderById(id);
     }
 
-    public PurchaseReceiptHeader getPurchaseReceiptHeaderByTrxNumber(String trxNumber){
+    @GetMapping("/trx-number/{trxNumber}")
+    public PurchaseReceiptHeader getPurchaseReceiptHeaderByTrxNumber(@PathVariable final String trxNumber) {
         return purchaseReceiptHeaderService.getPurchaseReceiptHeaderByTrxNumber(trxNumber);
     }
 
-    public List<PurchaseReceiptHeader> getPurchaseReceiptHeadersByPurchaseOrderHeaderId(Long purchaseOrderHeaderId){
-       return purchaseReceiptHeaderService.getPurchaseReceiptHeadersByPurchaseOrderHeaderId(purchaseOrderHeaderId);
+    @GetMapping("/purchase-order/{purchaseOrderHeaderId}")
+    public List<PurchaseReceiptHeader> getPurchaseReceiptHeadersByPurchaseOrderHeaderId(
+            @PathVariable final Long purchaseOrderHeaderId) {
+        return purchaseReceiptHeaderService.getPurchaseReceiptHeadersByPurchaseOrderHeaderId(purchaseOrderHeaderId);
     }
 
-    public List<PurchaseReceiptHeader> getPurchaseReceiptHeadersByVendorId(Long vendorId){
+    @GetMapping("/vendor/{vendorId}")
+    public List<PurchaseReceiptHeader> getPurchaseReceiptHeadersByVendorId(@PathVariable final Long vendorId) {
         return purchaseReceiptHeaderService.getPurchaseReceiptHeadersByVendorId(vendorId);
     }
 
-    public List<PurchaseReceiptHeader> getPurchaseReceiptHeadersByWarehouseId(Long warehouseId){
+    @GetMapping("/warehouse/{warehouseId}")
+    public List<PurchaseReceiptHeader> getPurchaseReceiptHeadersByWarehouseId(@PathVariable final Long warehouseId) {
         return purchaseReceiptHeaderService.getPurchaseReceiptHeadersByWarehouseId(warehouseId);
     }
 
-    public List<PurchaseReceiptHeader> getPurchaseReceiptHeadersByStatus(PurchaseReceiptStatus status){
+    @GetMapping("/status/{status}")
+    public List<PurchaseReceiptHeader> getPurchaseReceiptHeadersByStatus(
+            @PathVariable final PurchaseReceiptStatus status) {
         return purchaseReceiptHeaderService.getPurchaseReceiptHeadersByStatus(status);
     }
 
-    public List<PurchaseReceiptHeader> getPurchaseReceiptHeadersByReceivedBy(String receivedBy){
+    @GetMapping("/received-by/{receivedBy}")
+    public List<PurchaseReceiptHeader> getPurchaseReceiptHeadersByReceivedBy(
+            @PathVariable final String receivedBy) {
         return purchaseReceiptHeaderService.getPurchaseReceiptHeadersByReceivedBy(receivedBy);
     }
 
-    public boolean existsByTrxNumber(String trxNumber){
+    @GetMapping("/exists/{trxNumber}")
+    public boolean existsByTrxNumber(@PathVariable final String trxNumber) {
         return purchaseReceiptHeaderService.existsByTrxNumber(trxNumber);
     }
 
-    public void addPurchaseReceiptHeader(PurchaseReceiptHeader purchaseReceiptHeader){
-         purchaseReceiptHeaderService.addPurchaseReceiptHeader(purchaseReceiptHeader);
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public void addPurchaseReceiptHeader(
+            @RequestBody final PurchaseReceiptHeader purchaseReceiptHeader) {
+        purchaseReceiptHeaderService.addPurchaseReceiptHeader(purchaseReceiptHeader);
     }
 
-    public void updatePurchaseReceiptHeader(Long id, PurchaseReceiptHeader purchaseReceiptHeader){
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updatePurchaseReceiptHeader(
+            @PathVariable final Long id,
+            @RequestBody final PurchaseReceiptHeader purchaseReceiptHeader) {
         purchaseReceiptHeaderService.updatePurchaseReceiptHeader(id, purchaseReceiptHeader);
     }
 
-    public void deletePurchaseReceiptHeader(Long id){
+    @PatchMapping("/{id}/commit")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void commitPurchaseReceipt(@PathVariable final Long id) {
+        purchaseReceiptHeaderService.commitPurchaseReceipt(id);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deletePurchaseReceiptHeader(@PathVariable final Long id) {
         purchaseReceiptHeaderService.deletePurchaseReceiptHeader(id);
     }
 }
+

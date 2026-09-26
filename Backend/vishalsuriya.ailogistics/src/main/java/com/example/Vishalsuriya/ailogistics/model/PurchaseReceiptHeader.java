@@ -65,6 +65,9 @@ public class PurchaseReceiptHeader {
     )
     private List<PurchaseReceiptLine> purchaseReceiptLines = new ArrayList<>();
 
+    @Column(nullable = false)
+    private Integer committed = 0;
+
     @PrePersist
     public void prePersist() {
         createdAt = LocalDateTime.now();
@@ -77,6 +80,9 @@ public class PurchaseReceiptHeader {
         if (receivedDate == null) {
             receivedDate = LocalDate.now();
         }
+        if (committed == null) {
+            committed = 0;
+        }
     }
 
     @PreUpdate
@@ -84,12 +90,12 @@ public class PurchaseReceiptHeader {
         updatedAt = LocalDateTime.now();
     }
 
-    public void addPurchaseReceiptLine(PurchaseReceiptLine line) {
+    public void addPurchaseReceiptLine(final PurchaseReceiptLine line) {
         purchaseReceiptLines.add(line);
         line.setPurchaseReceiptHeader(this);
     }
 
-    public void removePurchaseReceiptLine(PurchaseReceiptLine line) {
+    public void removePurchaseReceiptLine(final PurchaseReceiptLine line) {
         purchaseReceiptLines.remove(line);
         line.setPurchaseReceiptHeader(null);
     }
