@@ -1,6 +1,7 @@
 package com.example.Vishalsuriya.ailogistics.service;
 
-import com.example.Vishalsuriya.ailogistics.model.Product;
+import com.example.Vishalsuriya.ailogistics.dto.product.ProductRequestDTO;
+import com.example.Vishalsuriya.ailogistics.dto.product.ProductResponseDTO;
 import com.example.Vishalsuriya.ailogistics.model.ProductStatus;
 
 import java.math.BigDecimal;
@@ -8,29 +9,29 @@ import java.util.List;
 
 public interface ProductService {
 
-    List<Product> getAllProducts();
+    List<ProductResponseDTO> getAllProducts();
 
-    Product getProductById(Long productId);
+    ProductResponseDTO getProductById(Long productId);
 
-    Product getBySku(String sku);
+    ProductResponseDTO getBySku(String sku);
 
-    Product getByProductCode(String productCode);
+    ProductResponseDTO getByProductCode(String productCode);
 
-    Product getByBarcode(String barcode);
+    ProductResponseDTO getByBarcode(String barcode);
 
-    List<Product> getByStatus(ProductStatus status);
+    List<ProductResponseDTO> getByStatus(ProductStatus status);
 
-    List<Product> getByVendorId(Long vendorId);
+    List<ProductResponseDTO> getByVendorId(Long vendorId);
 
-    List<Product> getByCategory(String category);
+    List<ProductResponseDTO> getByCategory(String category);
 
-    List<Product> getByBrand(String brand);
+    List<ProductResponseDTO> getByBrand(String brand);
 
-    List<Product> getByVendorIdAndStatus(Long vendorId, ProductStatus status);
+    List<ProductResponseDTO> getByVendorIdAndStatus(Long vendorId, ProductStatus status);
 
-    Product createProduct(Product product);
+    ProductResponseDTO createProduct(ProductRequestDTO requestDTO);
 
-    void updateProduct(Long productId, Product product);
+    void updateProduct(Long productId, ProductRequestDTO product);
 
     void activateProduct(Long productId);
 
