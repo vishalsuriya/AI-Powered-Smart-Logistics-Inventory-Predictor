@@ -1,5 +1,7 @@
 package com.example.Vishalsuriya.ailogistics.service;
 
+import com.example.Vishalsuriya.ailogistics.dto.vendor.VendorRequestDTO;
+import com.example.Vishalsuriya.ailogistics.dto.vendor.VendorResponseDTO;
 import com.example.Vishalsuriya.ailogistics.model.Vendor;
 import com.example.Vishalsuriya.ailogistics.model.VendorStatus;
 import com.example.Vishalsuriya.ailogistics.repository.VendorRepository;
@@ -7,7 +9,10 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 @Service
 public class VendorServiceImpl implements VendorService {
@@ -18,78 +23,118 @@ public class VendorServiceImpl implements VendorService {
         this.vendorRepo = vendorRepository;
     }
 
-    public String generateVendorCode() {
-        final long nextId = vendorRepo.count() + 1;
-        return String.format("VEN-%03d", nextId);
+    private VendorResponseDTO mapToResponseDTO(final Vendor vendor) {
+        final VendorResponseDTO vendorResponseDTO = new VendorResponseDTO();
+        vendorResponseDTO.setAddress(vendor.getAddress());
+        vendorResponseDTO.setCity(vendor.getCity());
+        vendorResponseDTO.setCompanyName(vendor.getCompanyName());
+        vendorResponseDTO.setContactNumber(vendor.getContactNumber());
+        vendorResponseDTO.setContactPerson(vendor.getContactPerson());
+        vendorResponseDTO.setCountry(vendor.getCountry());
+        vendorResponseDTO.setEmail(vendor.getEmail());
+        vendorResponseDTO.setPaymentTerms(vendor.getPaymentTerms());
+        vendorResponseDTO.setState(vendor.getState());
+        vendorResponseDTO.setTaxNumber(vendor.getTaxNumber());
+        vendorResponseDTO.setVendorCode(vendor.getVendorCode());
+        vendorResponseDTO.setVendorStatus(vendor.getVendorStatus());
+        vendorResponseDTO.setCurrencyType(vendor.getCurrencyType());
+        return vendorResponseDTO;
+    }
+    @Override
+    public List<VendorResponseDTO> getAllVendors() {
+        final List<Vendor> vendors = vendorRepo.findAll();
+        final List<VendorResponseDTO> vendorResponseDTOList = new ArrayList<>();
+        for (final Vendor vendor : vendors) {
+            vendorResponseDTOList.add(mapToResponseDTO(vendor));
+        }
+        return vendorResponseDTOList;
     }
 
     @Override
-    public List<Vendor> getAllVendors() {
-        return vendorRepo.findAll();
-    }
-
-    @Override
-    public Vendor getVendorById(final Long vendorId) {
-        return vendorRepo.findById(vendorId).
+    public VendorResponseDTO getVendorById(final Long vendorId) {
+        final Vendor vendor = vendorRepo.findById(vendorId).
                 orElseThrow(() -> new EntityNotFoundException("Vendor not found with ID: " + vendorId));
+        return mapToResponseDTO(vendor);
     }
 
     @Override
-    public Vendor getByVendorCode(final String vendorCode) {
-        return vendorRepo.findByVendorCode(vendorCode).
+    public VendorResponseDTO getByVendorCode(final String vendorCode) {
+        final Vendor vendor = vendorRepo.findByVendorCode(vendorCode).
                 orElseThrow(() -> new EntityNotFoundException("Vendor not found with vendorCode: " + vendorCode));
+        return mapToResponseDTO(vendor);
     }
 
     @Override
-    public Vendor getByCompanyName(final String companyName) {
-        return vendorRepo.findByCompanyName(companyName).
+    public VendorResponseDTO getByCompanyName(final String companyName) {
+        final Vendor vendor = vendorRepo.findByCompanyName(companyName).
                 orElseThrow(() -> new EntityNotFoundException("Vendor not found with companyName: " + companyName));
+        return mapToResponseDTO(vendor);
     }
 
     @Override
-    public Vendor getByEmail(final String email) {
-        return vendorRepo.findByEmail(email).
+    public VendorResponseDTO getByEmail(final String email) {
+        final Vendor vendor = vendorRepo.findByEmail(email).
                 orElseThrow(() -> new EntityNotFoundException("Vendor not found with email: " + email));
+        return mapToResponseDTO(vendor);
     }
 
     @Override
-    public Vendor getByContactNumber(final String contactNumber) {
-        return vendorRepo.findByContactNumber(contactNumber).
+    public VendorResponseDTO getByContactNumber(final String contactNumber) {
+        final Vendor vendor = vendorRepo.findByContactNumber(contactNumber).
                 orElseThrow(() -> new EntityNotFoundException("Vendor not found with contactNumber: " + contactNumber));
+        return mapToResponseDTO(vendor);
     }
 
     @Override
-    public List<Vendor> getByVendorStatus(final VendorStatus vendorStatus) {
-        return vendorRepo.findByVendorStatus(vendorStatus);
+    public List<VendorResponseDTO> getByVendorStatus(final VendorStatus vendorStatus) {
+        final List<Vendor> vendors = vendorRepo.findByVendorStatus(vendorStatus);
+        final List<VendorResponseDTO> vendorResponseDTOList = new ArrayList<>();
+        for (final Vendor vendor : vendors) {
+            vendorResponseDTOList.add(mapToResponseDTO(vendor));
+        }
+        return vendorResponseDTOList;
     }
 
     @Override
     @Transactional
-    public Vendor createVendor(final Vendor vendor) {
-        final String vendorCode = generateVendorCode();
-        validateForCreate(vendor);
-        vendor.setVendorCode(vendorCode);
-        return vendorRepo.save(vendor);
+    public VendorResponseDTO createVendor(final VendorRequestDTO requestDTO) {
+        validateForCreate(requestDTO);
+        final Vendor vendor = new Vendor();
+        vendor.setVendorCode("TEMP-" + UUID.randomUUID().toString());
+        vendor.setTaxNumber(requestDTO.getTaxNumber());
+        vendor.setAddress(requestDTO.getAddress());
+        vendor.setCity(requestDTO.getCity());
+        vendor.setContactNumber(requestDTO.getContactNumber());
+        vendor.setContactPerson(requestDTO.getContactPerson());
+        vendor.setCompanyName(requestDTO.getCompanyName());
+        vendor.setCurrencyType(requestDTO.getCurrencyType());
+        vendor.setEmail(requestDTO.getEmail());
+        vendor.setCountry(requestDTO.getCountry());
+        vendor.setPaymentTerms(requestDTO.getPaymentTerms());
+        vendor.setState(requestDTO.getState());
+        final Vendor savedVendor = vendorRepo.save(vendor);
+        final String vendorCode = String.format("VEN-%03d", savedVendor.getId());
+        savedVendor.setVendorCode(vendorCode);
+        final Vendor finalizedVendor = vendorRepo.save(savedVendor);
+        return mapToResponseDTO(finalizedVendor);
     }
 
     @Override
     @Transactional
-    public Vendor updateVendor(final Long vendorId, final Vendor vendor) {
+    public void updateVendor(final Long vendorId, final VendorRequestDTO requestDTO) {
         final Vendor existingVendor = findVendor(vendorId);
-        validateForUpdate(existingVendor, vendor);
-        existingVendor.setAddress(vendor.getAddress());
-        existingVendor.setCity(vendor.getCity());
-        existingVendor.setCountry(vendor.getCountry());
-        existingVendor.setContactNumber(vendor.getContactNumber());
-        existingVendor.setContactPerson(vendor.getContactPerson());
-        existingVendor.setCurrencyType(vendor.getCurrencyType());
-        existingVendor.setEmail(vendor.getEmail());
-        existingVendor.setPaymentTerms(vendor.getPaymentTerms());
-        existingVendor.setState(vendor.getState());
-        existingVendor.setVendorStatus(vendor.getVendorStatus());
-        existingVendor.setCompanyName(vendor.getCompanyName());
-        existingVendor.setTaxNumber(vendor.getTaxNumber());
-        return existingVendor;
+        validateForUpdate(existingVendor, requestDTO);
+        existingVendor.setAddress(requestDTO.getAddress());
+        existingVendor.setCity(requestDTO.getCity());
+        existingVendor.setCountry(requestDTO.getCountry());
+        existingVendor.setContactNumber(requestDTO.getContactNumber());
+        existingVendor.setContactPerson(requestDTO.getContactPerson());
+        existingVendor.setCurrencyType(requestDTO.getCurrencyType());
+        existingVendor.setEmail(requestDTO.getEmail());
+        existingVendor.setPaymentTerms(requestDTO.getPaymentTerms());
+        existingVendor.setState(requestDTO.getState());
+        existingVendor.setCompanyName(requestDTO.getCompanyName());
+        existingVendor.setTaxNumber(requestDTO.getTaxNumber());
     }
 
     @Override
@@ -147,24 +192,24 @@ public class VendorServiceImpl implements VendorService {
                 orElseThrow(() -> new EntityNotFoundException("Vendor not found by ID. " + vendorId));
     }
 
-    private void validateForCreate(final Vendor vendor) {
-        if (vendorRepo.existsByEmail(vendor.getEmail())) {
+    private void validateForCreate(final VendorRequestDTO requestDTO) {
+        if (vendorRepo.existsByEmail(requestDTO.getEmail())) {
             throw new IllegalArgumentException("Email already exists.");
         }
-        if (vendorRepo.existsByCompanyName(vendor.getCompanyName())) {
+        if (vendorRepo.existsByCompanyName(requestDTO.getCompanyName())) {
             throw new IllegalArgumentException("CompanyName already exists.");
         }
-        if (vendorRepo.existsByTaxNumber(vendor.getTaxNumber())) {
+        if (vendorRepo.existsByTaxNumber(requestDTO.getTaxNumber())) {
             throw new IllegalArgumentException("Tax number already exists.");
         }
-        if (vendorRepo.existsByContactNumber(vendor.getContactNumber())) {
+        if (vendorRepo.existsByContactNumber(requestDTO.getContactNumber())) {
             throw new IllegalArgumentException("Contact number already exists.");
         }
     }
 
-    private void validateForUpdate(final Vendor existingVendor, final Vendor updatedVendor) {
-        final String newEmail = updatedVendor.getEmail();
-        final String newContactNumber = updatedVendor.getContactNumber();
+    private void validateForUpdate(final Vendor existingVendor, final VendorRequestDTO requestDTO) {
+        final String newEmail = requestDTO.getEmail();
+        final String newContactNumber = requestDTO.getContactNumber();
 
         if (newEmail != null && !newEmail.equals(existingVendor.getEmail())
                 && vendorRepo.existsByEmail(newEmail)) {
@@ -175,12 +220,14 @@ public class VendorServiceImpl implements VendorService {
                 && vendorRepo.existsByContactNumber(newContactNumber)) {
             throw new IllegalArgumentException("Contact number already exists.");
         }
-        if (!existingVendor.getCompanyName().equals(updatedVendor.getCompanyName())
-                && vendorRepo.existsByCompanyName(updatedVendor.getCompanyName())) {
+        if (!Objects.equals(existingVendor.getCompanyName(), requestDTO.getCompanyName())
+                && requestDTO.getCompanyName() != null
+                && vendorRepo.existsByCompanyName(requestDTO.getCompanyName())) {
             throw new IllegalArgumentException("Company name already exists.");
         }
-        if (!existingVendor.getTaxNumber().equals(updatedVendor.getTaxNumber())
-                && vendorRepo.existsByTaxNumber(updatedVendor.getTaxNumber())) {
+        if (!Objects.equals(existingVendor.getTaxNumber(), requestDTO.getTaxNumber())
+                && requestDTO.getTaxNumber() != null
+                && vendorRepo.existsByTaxNumber(requestDTO.getTaxNumber())) {
             throw new IllegalArgumentException("Tax number already exists.");
         }
     }

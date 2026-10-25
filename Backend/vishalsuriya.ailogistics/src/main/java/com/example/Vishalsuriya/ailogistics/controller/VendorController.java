@@ -1,6 +1,7 @@
 package com.example.Vishalsuriya.ailogistics.controller;
 
-import com.example.Vishalsuriya.ailogistics.model.Vendor;
+import com.example.Vishalsuriya.ailogistics.dto.vendor.VendorRequestDTO;
+import com.example.Vishalsuriya.ailogistics.dto.vendor.VendorResponseDTO;
 import com.example.Vishalsuriya.ailogistics.model.VendorStatus;
 import com.example.Vishalsuriya.ailogistics.service.VendorService;
 import jakarta.validation.Valid;
@@ -21,49 +22,49 @@ public class VendorController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Vendor>> getAllVendors() {
+    public ResponseEntity<List<VendorResponseDTO>> getAllVendors() {
         return ResponseEntity.ok(vendorService.getAllVendors());
     }
 
     @GetMapping("/{vendorId}")
-    public ResponseEntity<Vendor> getVendorById(@PathVariable final Long vendorId) {
+    public ResponseEntity<VendorResponseDTO> getVendorById(@PathVariable final Long vendorId) {
         return ResponseEntity.ok(vendorService.getVendorById(vendorId));
     }
 
     @GetMapping("/code/{vendorCode}")
-    public ResponseEntity<Vendor> getByVendorCode(@PathVariable final String vendorCode) {
+    public ResponseEntity<VendorResponseDTO> getByVendorCode(@PathVariable final String vendorCode) {
         return ResponseEntity.ok(vendorService.getByVendorCode(vendorCode));
     }
 
     @GetMapping("/company-name/{companyName}")
-    public ResponseEntity<Vendor> getByCompanyName(@PathVariable final String companyName) {
+    public ResponseEntity<VendorResponseDTO> getByCompanyName(@PathVariable final String companyName) {
         return ResponseEntity.ok(vendorService.getByCompanyName(companyName));
     }
 
     @GetMapping("/email/{email}")
-    public ResponseEntity<Vendor> getByEmail(@PathVariable final String email) {
+    public ResponseEntity<VendorResponseDTO> getByEmail(@PathVariable final String email) {
         return ResponseEntity.ok(vendorService.getByEmail(email));
     }
 
     @GetMapping("/contact-number/{contactNumber}")
-    public ResponseEntity<Vendor> getByContactNumber(@PathVariable final String contactNumber) {
+    public ResponseEntity<VendorResponseDTO> getByContactNumber(@PathVariable final String contactNumber) {
         return ResponseEntity.ok(vendorService.getByContactNumber(contactNumber));
     }
 
     @GetMapping("/status/{status}")
-    public ResponseEntity<List<Vendor>> getByVendorStatus(@PathVariable final VendorStatus status) {
+    public ResponseEntity<List<VendorResponseDTO>> getByVendorStatus(@PathVariable final VendorStatus status) {
         return ResponseEntity.ok(vendorService.getByVendorStatus(status));
     }
     
     @PostMapping
-    public ResponseEntity<Vendor> createVendor(@RequestBody @Valid final Vendor vendor) {
-        final Vendor savedVendor = vendorService.createVendor(vendor);
+    public ResponseEntity<VendorResponseDTO> createVendor(@RequestBody @Valid final VendorRequestDTO requestDTO) {
+        final VendorResponseDTO savedVendor = vendorService.createVendor(requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedVendor);
     }
 
     @PutMapping("/{vendorId}")
-    public ResponseEntity<Void> updateVendor(@PathVariable final Long vendorId, @Valid @RequestBody final Vendor vendor) {
-        vendorService.updateVendor(vendorId, vendor);
+    public ResponseEntity<Void> updateVendor(@PathVariable final Long vendorId, @Valid @RequestBody final VendorRequestDTO requestDTO) {
+        vendorService.updateVendor(vendorId, requestDTO);
         return ResponseEntity.ok().build();
     }
 

@@ -1,29 +1,30 @@
 package com.example.Vishalsuriya.ailogistics.service;
 
-import com.example.Vishalsuriya.ailogistics.model.Vendor;
+import com.example.Vishalsuriya.ailogistics.dto.vendor.VendorRequestDTO;
+import com.example.Vishalsuriya.ailogistics.dto.vendor.VendorResponseDTO;
 import com.example.Vishalsuriya.ailogistics.model.VendorStatus;
 
 import java.util.List;
 
 public interface VendorService {
 
-    List<Vendor> getAllVendors();
+    List<VendorResponseDTO> getAllVendors();
 
-    Vendor getVendorById(Long vendorId);
+    VendorResponseDTO getVendorById(Long vendorId);
 
-    Vendor getByVendorCode(String vendorCode);
+    VendorResponseDTO getByVendorCode(String vendorCode);
 
-    Vendor getByCompanyName(String companyName);
+    VendorResponseDTO getByCompanyName(String companyName);
 
-    Vendor getByEmail(String email);
+    VendorResponseDTO getByEmail(String email);
 
-    Vendor getByContactNumber(String contactNumber);
+    VendorResponseDTO getByContactNumber(String contactNumber);
 
-    List<Vendor> getByVendorStatus(VendorStatus vendorStatus);
+    List<VendorResponseDTO> getByVendorStatus(VendorStatus vendorStatus);
 
-    Vendor createVendor(Vendor vendor);
+    VendorResponseDTO createVendor(VendorRequestDTO requestDTO);
 
-    Vendor updateVendor(Long vendorId, Vendor vendor);
+    void updateVendor(Long vendorId, VendorRequestDTO requestDTO);
 
     void activateVendor(Long vendorId);
 
