@@ -1,6 +1,7 @@
 package com.example.Vishalsuriya.ailogistics.controller;
 
-import com.example.Vishalsuriya.ailogistics.model.Warehouse;
+import com.example.Vishalsuriya.ailogistics.dto.warehouse.WarehouseRequestDTO;
+import com.example.Vishalsuriya.ailogistics.dto.warehouse.WarehouseResponseDTO;
 import com.example.Vishalsuriya.ailogistics.service.WarehouseService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -20,29 +21,29 @@ public class WarehouseController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Warehouse>> getAllWarehouses() {
+    public ResponseEntity<List<WarehouseResponseDTO>> getAllWarehouses() {
         return ResponseEntity.ok(warehouseService.getAllWarehouses());
     }
 
     @GetMapping("/{warehouseId}")
-    public ResponseEntity<Warehouse> getWarehouseById(@PathVariable final Long warehouseId) {
+    public ResponseEntity<WarehouseResponseDTO> getWarehouseById(@PathVariable final Long warehouseId) {
         return ResponseEntity.ok(warehouseService.getWarehouseById(warehouseId));
     }
 
     @GetMapping("/code/{warehouseCode}")
-    public ResponseEntity<Warehouse> getWarehouseByWarehouseCode(@PathVariable final String warehouseCode) {
+    public ResponseEntity<WarehouseResponseDTO> getWarehouseByWarehouseCode(@PathVariable final String warehouseCode) {
         return ResponseEntity.ok(warehouseService.getWarehouseByWarehouseCode(warehouseCode));
     }
 
     @PostMapping
-    public ResponseEntity<Void> addWarehouse(@Valid @RequestBody final Warehouse warehouse) {
-        warehouseService.addWarehouse(warehouse);
+    public ResponseEntity<Void> addWarehouse(@Valid @RequestBody final WarehouseRequestDTO warehouseRequestDTO) {
+        warehouseService.addWarehouse(warehouseRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PutMapping("/{warehouseId}")
-    public ResponseEntity<Void> updateWarehouse(@PathVariable final Long warehouseId, @Valid @RequestBody final Warehouse warehouse) {
-        warehouseService.updateWarehouse(warehouseId,warehouse);
+    public ResponseEntity<Void> updateWarehouse(@PathVariable final Long warehouseId, @Valid @RequestBody final WarehouseRequestDTO warehouseRequestDTO) {
+        warehouseService.updateWarehouse(warehouseId, warehouseRequestDTO);
         return ResponseEntity.noContent().build();
     }
 

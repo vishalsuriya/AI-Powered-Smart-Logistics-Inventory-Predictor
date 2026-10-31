@@ -1,22 +1,21 @@
 package com.example.Vishalsuriya.ailogistics.service;
 
-import com.example.Vishalsuriya.ailogistics.model.Warehouse;
+import com.example.Vishalsuriya.ailogistics.dto.warehouse.WarehouseRequestDTO;
+import com.example.Vishalsuriya.ailogistics.dto.warehouse.WarehouseResponseDTO;
 
 import java.util.List;
 
 public interface WarehouseService {
 
-    List<Warehouse> getAllWarehouses();
+    List<WarehouseResponseDTO> getAllWarehouses();
 
-    Warehouse getWarehouseById(Long warehouseId);
+    WarehouseResponseDTO getWarehouseById(Long warehouseId);
 
-    Warehouse getWarehouseByWarehouseCode(String warehouseCode);
+    WarehouseResponseDTO getWarehouseByWarehouseCode(String warehouseCode);
 
-    String generateWarehouseCode();
+    void addWarehouse(WarehouseRequestDTO warehouseRequestDTO);
 
-    void addWarehouse(Warehouse warehouse);
-
-    void updateWarehouse(Long warehouseId, Warehouse warehouse);
+    void updateWarehouse(Long warehouseId, WarehouseRequestDTO warehouseRequestDTO);
 
     void deleteWarehouse(Long warehouseId);
 
